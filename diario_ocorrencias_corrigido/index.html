@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diário de Ocorrências</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <div id="auth-layer" class="auth">
+   <div class="auth-brand">
+    <div>
+      <div class="nome-pi">  
+        <strong>Diário de<br>Ocorrências</strong>
+        <img  class="logo-cadastro"  src="logo_cps_versao_br.png" alt="">
+     </div>
+     <span class="unit">FATEC de Jaú · Protótipo</span>
+    </div>
+    <ul class="auth-roles">
+     <li><b>Professor</b>Abre ocorrências e registra o uso dos carrinhos de notebooks.</li>
+     <li><b>Auxiliar Docente</b>Atende chamados, cuida dos equipamentos e aprova novos cadastros.</li>
+     <li><b>Gestor / Coordenação</b>Acompanha indicadores, relatórios e parâmetros da unidade.</li>
+    </ul>
+    <div class="auth-foot">Ambiente demonstrativo · dados não são salvos</div>
+   </div>
+   <div class="auth-panel">
+    <div class="auth-box">
+     <div id="auth-flash" role="status" aria-live="polite"></div>
+
+     <section data-auth="login" aria-label="Entrar">
+      <div class="eyebrow">Acesso ao sistema</div>
+      <h2>Entrar</h2>
+      <p class="sub">Use sua identificação e senha. Depois, confirme com o código enviado ao e-mail institucional.</p>
+      <form id="login-form" class="stack" novalidate>
+       <div class="field"><label for="login-id">E-mail institucional ou identificação</label><input id="login-id" autocomplete="username" required placeholder="nome.sobrenome@fatec.sp.gov.br"></div>
+       <div class="field"><label for="login-pass">Senha</label><input id="login-pass" type="password" autocomplete="current-password" required></div>
+       <button class="btn primary" type="submit">Entrar</button>
+      </form>
+      <div class="auth-links"><button type="button" class="linkbtn" data-auth-go="recover">Esqueci minha senha</button><button type="button" class="linkbtn" data-auth-go="register">Criar cadastro</button></div>
+      <details class="demo-box">
+       <summary>Contas de demonstração</summary>
+       <ul>
+        <li><b>Professor:</b> <code>marina.costa</code></li>
+        <li><b>Auxiliar Docente:</b> <code>alex.santos</code></li>
+        <li><b>Gestor / Coordenação:</b> <code>patricia.lima</code></li>
+        <li><b>Cadastro pendente:</b> <code>carlos.mendes</code> (não consegue entrar até ser aprovado)</li>
+        <li>Senha de todas: <code>Fatec@2026</code></li>
+       </ul>
+      </details>
+     </section>
+
+     <section data-auth="code" aria-label="Confirmar código" hidden>
+      <div class="eyebrow">Verificação em duas etapas</div>
+      <h2>Digite o código</h2>
+      <p class="sub">Enviamos um código único de 6 dígitos para <strong id="code-target"></strong>.</p>
+      <div class="note" style="margin-bottom:16px">Demonstração: nenhum e-mail é enviado. O código aparece abaixo.<div class="democode" id="demo-code" aria-label="Código de demonstração"></div></div>
+      <form id="code-form" class="stack" novalidate>
+       <div class="field"><label for="code-input">Código recebido por e-mail</label><input id="code-input" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required placeholder="000000"></div>
+       <button class="btn primary" type="submit">Confirmar e entrar</button>
+      </form>
+      <div class="auth-links"><button type="button" class="linkbtn" id="code-resend">Reenviar código</button><button type="button" class="linkbtn" data-auth-go="login">Voltar</button></div>
+     </section>
+
+     <section data-auth="register" aria-label="Cadastro" hidden>
+      <div class="eyebrow">Novo acesso</div>
+      <h2>Criar cadastro</h2>
+      <p class="sub">Use o e-mail institucional. Um Auxiliar Docente aprova o cadastro antes do primeiro acesso.</p>
+      <form id="register-form" class="stack" novalidate>
+       <div class="field"><label for="reg-name">Nome completo</label><input id="reg-name" autocomplete="name" required></div>
+       <div class="field"><label for="reg-email">E-mail institucional</label><input id="reg-email" type="email" autocomplete="email" required placeholder="nome.sobrenome@fatec.sp.gov.br"></div>
+       <div class="field"><label for="reg-profile">Perfil de acesso</label><select id="reg-profile" required><option value="">Selecione</option><option value="professor">Professor</option><option value="auxiliar">Auxiliar Docente</option><option value="gestor">Gestor / Coordenação</option></select></div>
+       <div class="field"><label for="reg-pass">Senha</label><input id="reg-pass" type="password" autocomplete="new-password" required aria-describedby="reg-pass-hint"><span id="reg-pass-hint" class="subtle">Mínimo de 8 caracteres, com letras e números.</span></div>
+       <div class="field"><label for="reg-pass2">Confirmar senha</label><input id="reg-pass2" type="password" autocomplete="new-password" required></div>
+       <button class="btn primary" type="submit">Enviar cadastro</button>
+      </form>
+      <div class="auth-links"><button type="button" class="linkbtn" data-auth-go="login">Já tenho cadastro</button></div>
+     </section>
+
+     <section data-auth="recover" aria-label="Recuperar senha" hidden>
+      <div class="eyebrow">Recuperação de acesso</div>
+      <h2>Redefinir senha</h2>
+      <p class="sub">Informe o e-mail institucional. Enviaremos um link para criar uma nova senha.</p>
+      <form id="recover-form" class="stack" novalidate>
+       <div class="field"><label for="rec-email">E-mail institucional</label><input id="rec-email" type="email" autocomplete="email" required placeholder="nome.sobrenome@fatec.sp.gov.br"></div>
+       <button class="btn primary" type="submit">Enviar link de redefinição</button>
+      </form>
+      <div class="auth-links"><button type="button" class="linkbtn" data-auth-go="login">Voltar para o login</button></div>
+     </section>
+
+     <section data-auth="recover-sent" aria-label="Link enviado" hidden>
+      <div class="eyebrow">Recuperação de acesso</div>
+      <h2>Confira seu e-mail</h2>
+      <p class="sub">Se o e-mail informado estiver cadastrado, o link de redefinição já foi enviado.</p>
+      <div id="demo-reset" class="note" style="margin-bottom:16px" hidden>Demonstração: nenhum e-mail é enviado. Este botão representa o link recebido na caixa de entrada.<div style="margin-top:10px"><button type="button" class="btn small" id="open-reset">Abrir link de redefinição</button></div></div>
+      <div class="auth-links"><button type="button" class="linkbtn" data-auth-go="login">Voltar para o login</button></div>
+     </section>
+
+     <section data-auth="reset" aria-label="Nova senha" hidden>
+      <div class="eyebrow">Recuperação de acesso</div>
+      <h2>Criar nova senha</h2>
+      <p class="sub">Escolha uma senha com pelo menos 8 caracteres, com letras e números.</p>
+      <form id="reset-form" class="stack" novalidate>
+       <div class="field"><label for="reset-pass">Nova senha</label><input id="reset-pass" type="password" autocomplete="new-password" required></div>
+       <div class="field"><label for="reset-pass2">Confirmar nova senha</label><input id="reset-pass2" type="password" autocomplete="new-password" required></div>
+       <button class="btn primary" type="submit">Salvar nova senha</button>
+      </form>
+     </section>
+    </div>
+   </div>
+  </div>
+  <div class="shell">
+   <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+    <div class="brand">
+          <div class="sidebar-logo">
+        <img src="logo_cps_versao_br.png" alt="">
+      </div>
+     <strong class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-size: 23px;">Diário de<br>
+      Ocorrências</strong><small class="canva-text" style="color: rgb(188, 209, 216); font-weight: 400; font-style: normal; font-size: 15px;">FATEC de Jaú · Protótipo</small>
+    </div>
+    <nav id="nav" class="stack" style="gap:3px" aria-label="Áreas do sistema"></nav>
+
+    <div class="subtle" style="color:#c5d9df;margin-top:auto;padding:12px">
+     Ambiente demonstrativo · dados não são salvos
+    </div>
+   </aside>
+   <div class="content">
+    <header class="topbar">
+     <div class="row">
+      <button type="button" class="btn mobile-menu" id="menu-btn" aria-label="Abrir menu" aria-expanded="false">☰</button>
+      <div>
+       <div class="eyebrow">
+        Gestão de manutenção e infraestrutura
+       </div><strong id="header-area">Visão geral</strong>
+      </div>
+     </div>
+     <div class="topbar-right">
+      <span id="user-chip" class="user-chip"></span><button type="button" class="btn small" id="alert-shortcut">⚠ Alertas <span id="alert-count">0</span></button><button type="button" class="btn small" id="logout-btn">Sair</button>
+     </div>
+    </header>
+    <main class="main-content">
+     <div class="eyebrow">
+      FATEC DE JAÚ / PAINEL DE DEMONSTRAÇÃO
+     </div>
+     <h1 id="view-title">Visão geral</h1>
+     <p id="view-subtitle" class="sub">Acompanhe os atendimentos e os recursos da unidade.</p>
+     <div id="flash" role="status" aria-live="polite"></div>
+     <section class="view" id="view-dashboard" aria-label="Visão geral">
+      <div id="stats" class="grid-stats"></div>
+      <div class="two-col" style="margin-top:18px">
+       <div class="card pad">
+        <h2>Ocorrências por prioridade</h2>
+        <div id="priority-chart"></div>
+       </div>
+       <div class="card pad">
+        <h2>Acesso rápido</h2>
+        <p class="subtle">Registre uma solicitação ou confira o uso de um carrinho em poucos passos.</p>
+        <div class="row">
+         <button type="button" class="btn primary" data-goto="ocorrencias" data-action="new-incident">＋ Abrir ocorrência</button><button type="button" class="btn" data-goto="carrinhos">▣ Carrinhos</button>
+        </div>
+        <div class="divider"></div>
+        <div id="dashboard-alerts" class="note"></div>
+       </div>
+      </div>
+      <div class="section-head">
+       <h2>Ocorrências abertas</h2>
+       <div class="row">
+        <label for="dashboard-period">Período</label><select id="dashboard-period" style="width:auto"><option value="all">Todo o período</option><option value="week">Esta semana</option><option value="month">Este mês</option></select><label for="dashboard-category">Categoria</label><select id="dashboard-category" style="width:auto"><option value="all">Todas</option><option>Tecnologia</option><option>Infraestrutura</option></select>
+       </div>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>ID</th>
+          <th>Local</th>
+          <th>Problema</th>
+          <th>Prioridade</th>
+          <th>Status</th>
+          <th>Responsável</th>
+          <th>Ação</th>
+         </tr>
+        </thead>
+        <tbody id="dashboard-rows"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-ocorrencias" hidden="" aria-label="Ocorrências">
+      <div class="section-head">
+       <h2>Registro e acompanhamento</h2><button type="button" class="btn primary" id="new-incident">＋ Nova ocorrência</button>
+      </div>
+      <div class="card pad">
+       <div class="form-grid">
+        <div class="field">
+         <label for="incident-search">Pesquisar por ID, local ou problema</label><input id="incident-search" type="search" placeholder="Ex.: laboratório, rede, OC-101">
+        </div>
+        <div class="field">
+         <label for="incident-category">Categoria</label><select id="incident-category"><option value="all">Todas</option><option>Tecnologia</option><option>Infraestrutura</option></select>
+        </div>
+        <div class="field">
+         <label for="incident-status">Status</label><select id="incident-status"><option value="all">Todos</option><option>Aberta</option><option>Em análise</option><option>Em andamento</option><option>Aguardando peça/material/manutenção externa</option><option>Resolvida</option><option>Encerrada</option></select>
+        </div>
+        <div class="field">
+         <label for="incident-priority">Prioridade</label><select id="incident-priority"><option value="all">Todas</option><option>Crítica</option><option>Alta</option><option>Média</option><option>Baixa</option></select>
+        </div>
+       </div>
+      </div>
+      <div class="section-head">
+       <h2>Lista de ocorrências</h2><span id="incident-total" class="subtle"></span>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>ID</th>
+          <th>Data</th>
+          <th>Local</th>
+          <th>Problema</th>
+          <th>Categoria</th>
+          <th>Prioridade</th>
+          <th>Status</th>
+          <th>Ação</th>
+         </tr>
+        </thead>
+        <tbody id="incident-rows"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-carrinhos" hidden="" aria-label="Carrinhos">
+      <div class="two-col">
+       <div class="card pad">
+        <h2>Abrir carrinho</h2>
+        <p class="subtle">QR Code simulado: selecione o carrinho para registrar sua retirada.</p>
+        <form id="cart-open-form" class="stack">
+         <div class="form-grid">
+          <div class="field">
+           <label for="cart-teacher">Professor</label><input id="cart-teacher" required="" value="Marina Costa">
+          </div>
+          <div class="field">
+           <label for="cart-course">Curso</label><input id="cart-course" required="" value="Desenvolvimento de Software Multiplataforma">
+          </div>
+          <div class="field">
+           <label for="cart-subject">Disciplina</label><input id="cart-subject" required="" placeholder="Ex.: Banco de Dados">
+          </div>
+          <div class="field">
+           <label for="cart-class">Turma</label><input id="cart-class" required="" placeholder="Ex.: DSM 2º semestre">
+          </div>
+          <div class="field">
+           <label for="cart-room">Sala</label><input id="cart-room" required="" placeholder="Ex.: Laboratório 03">
+          </div>
+          <div class="field">
+           <label for="cart-id">Carrinho / QR simulado</label><select id="cart-id" required=""><option value="">Selecione</option><option>Carrinho 01</option><option>Carrinho 02</option><option>Carrinho 03</option></select>
+          </div>
+         </div><button class="btn primary" type="submit">▣ Registrar abertura</button>
+        </form>
+       </div>
+       <div class="card pad">
+        <h2>Devolver carrinho</h2>
+        <p class="subtle">Confira os 20 notebooks antes de finalizar.</p>
+        <form id="cart-return-form" class="stack">
+         <div class="field">
+          <label for="return-cart">Carrinho em uso</label><select id="return-cart" required=""></select>
+         </div>
+         <div class="field">
+          <label for="return-count">Notebooks conferidos (de 20)</label><input id="return-count" type="number" min="0" max="20" required="" value="20">
+         </div>
+         <div class="field">
+          <label for="return-condition">Condição dos notebooks e acessórios</label><select id="return-condition" required=""><option value="">Selecione</option><option>Todos conferidos e em ordem</option><option>Há divergência ou avaria</option></select>
+         </div>
+         <div class="field">
+          <label for="return-issue">Houve ocorrência durante o uso?</label><select id="return-issue" required=""><option value="">Selecione Sim ou Não</option><option>Não</option><option>Sim</option></select>
+         </div>
+         <div id="return-extra" class="stack hidden">
+          <div class="field">
+           <label for="return-category">Categoria da ocorrência</label><select id="return-category"><option>Tecnologia</option><option>Infraestrutura</option></select>
+          </div>
+          <div class="field">
+           <label for="return-type">Tipo de problema</label><input id="return-type" placeholder="Ex.: notebook não liga">
+          </div>
+          <div class="field">
+           <label for="return-equipment">Equipamento relacionado</label><input id="return-equipment" placeholder="Ex.: NB-08">
+          </div>
+          <div class="field">
+           <label for="return-description">Descrição da ocorrência</label><textarea id="return-description" placeholder="Descreva o que aconteceu"></textarea>
+          </div>
+         </div><button type="submit" class="btn primary">✓ Registrar devolução</button>
+        </form>
+       </div>
+      </div>
+      <div class="section-head">
+       <h2>Carrinhos e registros de uso</h2>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>Carrinho</th>
+          <th>Professor</th>
+          <th>Disciplina / turma</th>
+          <th>Sala</th>
+          <th>Abertura</th>
+          <th>Devolução</th>
+          <th>Situação</th>
+         </tr>
+        </thead>
+        <tbody id="cart-rows"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-equipamentos" hidden="" aria-label="Equipamentos">
+      <div class="section-head">
+       <h2>Inventário demonstrativo</h2><button type="button" class="btn primary" id="new-equipment">＋ Cadastrar equipamento</button>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>Patrimônio / ID</th>
+          <th>Tipo</th>
+          <th>Modelo</th>
+          <th>Bloco / sala</th>
+          <th>Recebimento</th>
+          <th>Status</th>
+          <th>Ação</th>
+         </tr>
+        </thead>
+        <tbody id="equipment-rows"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-manutencao" hidden="" aria-label="Manutenção preventiva">
+      <div class="note">
+       Ao reprovar um item e concluir o checklist, uma ocorrência demonstrativa é criada automaticamente.
+      </div>
+      <div class="section-head">
+       <h2>Agenda de manutenção preventiva</h2>
+      </div>
+      <div id="maintenance-schedule" class="two-col"></div>
+      <div class="section-head">
+       <h2>Novo checklist</h2>
+      </div>
+      <form id="maintenance-form" class="card pad stack">
+       <div class="form-grid">
+        <div class="field">
+         <label for="maintenance-category">Área</label><select id="maintenance-category"><option>Tecnologia</option><option>Infraestrutura</option></select>
+        </div>
+        <div class="field">
+         <label for="maintenance-room">Sala</label><input id="maintenance-room" required="" placeholder="Ex.: Laboratório 02">
+        </div>
+        <div class="field">
+         <label for="maintenance-agent">Auxiliar responsável</label><input id="maintenance-agent" required="" value="Alex Santos">
+        </div>
+        <div class="field">
+         <label for="maintenance-date">Data e horário</label><input id="maintenance-date" type="datetime-local" required="">
+        </div>
+       </div>
+       <fieldset style="border:0;padding:0">
+        <legend style="font-weight:700;margin-bottom:8px">Itens verificados — marque os aprovados</legend>
+        <div id="maintenance-items"></div>
+       </fieldset>
+       <div class="field">
+        <label for="maintenance-notes">Observações</label><textarea id="maintenance-notes" placeholder="Detalhes da vistoria"></textarea>
+       </div><button type="submit" class="btn primary">✓ Concluir checklist</button>
+      </form>
+     </section>
+     <section class="view" id="view-relatorios" hidden="" aria-label="Relatórios">
+      <div class="row" style="margin-bottom:18px">
+       <div class="field">
+        <label for="report-period">Período do relatório</label><select id="report-period"><option value="week">Semanal</option><option value="month" selected="">Mensal</option><option value="year">Anual</option></select>
+       </div><button type="button" class="btn export-demo">↓ Exportar PDF · demonstração</button><button type="button" class="btn export-demo">↓ Exportar Excel · demonstração</button>
+      </div>
+      <div id="report-stats" class="grid-stats"></div>
+      <div class="two-col" style="margin-top:18px">
+       <div class="card pad">
+        <h2>Principais problemas</h2>
+        <ul id="report-problems" class="mini-list"></ul>
+       </div>
+       <div class="card pad">
+        <h2>Salas mais afetadas</h2>
+        <ul id="report-rooms" class="mini-list"></ul>
+       </div>
+      </div>
+      <div class="section-head">
+       <h2>Demandas que exigem recursos</h2>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>Ocorrência</th>
+          <th>Sala</th>
+          <th>Demanda</th>
+          <th>Situação</th>
+         </tr>
+        </thead>
+        <tbody id="report-resources"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-historico" hidden="" aria-label="Meu histórico">
+      <div class="note">
+       Carrinhos e ocorrências registrados em seu nome nesta sessão de demonstração.
+      </div>
+      <div class="section-head">
+       <h2>Carrinhos utilizados</h2>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>Carrinho</th>
+          <th>Data / horário</th>
+          <th>Turma</th>
+          <th>Disciplina</th>
+          <th>Sala</th>
+         </tr>
+        </thead>
+        <tbody id="history-carts"></tbody>
+       </table>
+      </div>
+      <div class="section-head">
+       <h2>Ocorrências abertas por você</h2>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>ID</th>
+          <th>Data</th>
+          <th>Problema</th>
+          <th>Local</th>
+          <th>Status</th>
+         </tr>
+        </thead>
+        <tbody id="history-incidents"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-configuracoes" hidden="" aria-label="Usuários e configurações">
+      <div class="two-col">
+       <div class="card pad">
+        <h2>Usuários e permissões</h2>
+        <ul class="mini-list" id="users-list"></ul>
+        <p class="subtle">Novos cadastros são aprovados por Auxiliares Docentes, na área Aprovação de cadastros.</p><h3>Telas por perfil</h3><div class="table-wrap" id="permission-matrix"></div>
+       </div>
+       <div class="card pad">
+        <h2>Parâmetros demonstrativos</h2>
+        <form id="settings-form" class="stack">
+         <div class="field">
+          <label for="settings-categories">Categorias</label><input id="settings-categories" value="Tecnologia, Infraestrutura">
+         </div>
+         <div class="field">
+          <label for="settings-priorities">Prioridades</label><input id="settings-priorities" value="Crítica, Alta, Média, Baixa">
+         </div>
+         <div class="field">
+          <label for="settings-sla">SLA: crítica / alta / média / baixa (horas)</label><input id="settings-sla" value="2 / 8 / 24 / 72">
+         </div><button type="submit" class="btn primary">Salvar parâmetros nesta sessão</button>
+        </form>
+       </div>
+      </div>
+     </section>
+     <section class="view" id="view-aprovacoes" hidden="" aria-label="Aprovação de cadastros">
+      <div class="note">
+       Cadastros novos só acessam o sistema depois da aprovação de um Auxiliar Docente.
+      </div>
+      <div class="section-head">
+       <h2>Solicitações de acesso</h2><span id="approval-total" class="subtle"></span>
+      </div>
+      <div class="card table-wrap">
+       <table class="data-table">
+        <thead>
+         <tr>
+          <th>Nome</th>
+          <th>E-mail institucional</th>
+          <th>Perfil solicitado</th>
+          <th>Situação</th>
+          <th>Ação</th>
+         </tr>
+        </thead>
+        <tbody id="approval-rows"></tbody>
+       </table>
+      </div>
+     </section>
+     <section class="view" id="view-alertas" hidden="" aria-label="Central de alertas">
+      <div class="note">
+       Alertas simulados calculados a partir dos registros desta sessão. O tempo esperado para devolução é de 2 horas.
+      </div>
+      <div class="section-head">
+       <h2>Itens que precisam de atenção</h2>
+      </div>
+      <div id="alerts-list" class="stack"></div>
+     </section>
+     <section class="view" id="view-perfil" hidden="" aria-label="Meu perfil">
+      <div class="card pad" style="max-width:650px">
+       <h2>Dados do perfil demonstrativo</h2>
+       <form id="personal-form" class="stack">
+        <div class="field">
+         <label for="personal-name">Nome</label><input id="personal-name" required="" value="Marina Costa">
+        </div>
+        <div class="field">
+         <label for="personal-email">E-mail institucional (não editável)</label><input id="personal-email" type="email" required="" readonly>
+        </div><button type="submit" class="btn primary">Salvar alterações nesta sessão</button>
+       </form>
+       <div class="divider"></div>
+       <h3>Recuperação de acesso</h3>
+       <p class="subtle">Para redefinir a senha, saia do sistema e solicite o link pelo e-mail institucional. Nesta demonstração, o e-mail é simulado na própria tela.</p><button type="button" id="recovery-demo" class="btn">Sair e redefinir senha</button>
+      </div>
+     </section>
+    </main>
+   </div>
+  </div>
+  <div id="modal-layer" class="modal-backdrop hidden" role="presentation">
+   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+     <h2 id="modal-title" style="margin:0"></h2><button type="button" class="btn small" id="modal-close" aria-label="Fechar janela">✕</button>
+    </div>
+    <div id="modal-body" style="margin-top:18px"></div>
+   </div>
+  </div>
+  
+ 
+</div>
+<script src="script.js"></script>
+</body>
+</html>
